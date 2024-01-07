@@ -9,9 +9,11 @@ import {
 } from "@blocknote/react";
 import "@blocknote/core/style.css";
 import CustomToolbar from "./CustomToolbar";
+import { useState } from "react";
+import CustomFontSelector from "./CustomFontSelector";
 
 // Custom red light theme
-const lightRedTheme = {
+const lightGrayTheme = {
   colors: {
     editor: {
       text: "#222222",
@@ -49,9 +51,9 @@ const lightRedTheme = {
 
 // Custom red dark theme
 const darkRedTheme = {
-  ...lightRedTheme,
+  ...lightGrayTheme,
   colors: {
-    ...lightRedTheme.colors,
+    ...lightGrayTheme.colors,
     editor: {
       text: "#ffffff",
       background: "violet",
@@ -63,18 +65,46 @@ const darkRedTheme = {
 } satisfies Theme;
 
 // Combining the custom themes into a single theme object.
-const redTheme = {
-  light: lightRedTheme,
+const grayTheme = {
+  light: lightGrayTheme,
   dark: darkRedTheme,
 };
 
+const getGrayTheme = (fontFamily: string) => ({
+  light: {
+    ...lightGrayTheme,
+    fontFamily: fontFamily || lightGrayTheme.fontFamily,
+  },
+  dark: {
+    ...darkRedTheme,
+    fontFamily: fontFamily || darkRedTheme.fontFamily,
+  },
+});
+
 const Editor = () => {
-  // Creates a new editor instance.
-  const editor: BlockNoteEditor = useBlockNote({});
+  const [fontSize, setFontSize] = useState("16px");
+  const [fontFamily, setFontFamily] = useState("");
+  const editor = useBlockNote({});
+
+  const applyFontToSelectedLine = (fontFamily: string) => {
+    // Logic to apply the selected font family to the editor
+    setFontFamily(fontFamily);
+    // You might need to implement additional logic here to update the editor's content
+  };
+
   return (
     <div className="w-full flex flex-col gap-10">
-      <CustomToolbar editor={editor} />
-      <BlockNoteView editor={editor} theme={redTheme} />
+      <CustomToolbar
+        editor={editor}
+        fontSize={fontSize}
+        fontFamily={fontFamily}
+        setFontSize={setFontSize}
+        setFontFamily={setFontFamily}
+      />
+      <CustomFontSelector setFontFamily={applyFontToSelectedLine} />
+      <BlockNoteView editor={editor} theme={getGrayTheme(fontFamily)} />
+
+      {/* <BlockNoteView editor={editor} theme={grayTheme} /> */}
     </div>
   );
 };
