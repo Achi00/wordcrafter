@@ -1,68 +1,28 @@
 "use client";
-import { BlockNoteEditor } from "@blocknote/core";
+import {
+  BlockNoteEditor,
+  defaultBlockSchema,
+  defaultBlockSpecs,
+  defaultProps,
+} from "@blocknote/core";
 import {
   BlockNoteView,
+  createReactBlockSpec,
   darkDefaultTheme,
+  getDefaultReactSlashMenuItems,
   lightDefaultTheme,
+  ReactSlashMenuItem,
   Theme,
   useBlockNote,
 } from "@blocknote/react";
 import "@blocknote/core/style.css";
 import CustomToolbar from "./CustomToolbar";
-import { useState } from "react";
+import { SetStateAction, useCallback, useRef, useState } from "react";
 import CustomFontSelector from "./CustomFontSelector";
-
-// Custom red light theme
-const lightGrayTheme = {
-  colors: {
-    editor: {
-      text: "#222222",
-      background: "#ffffff",
-    },
-    menu: {
-      text: "#ffffff",
-      background: "#050B18",
-    },
-    tooltip: {
-      text: "#ffffff",
-      background: "#050B18",
-    },
-    hovered: {
-      text: "#ffffff",
-      background: "#0d204a",
-    },
-    selected: {
-      text: "#ffffff",
-      background: "#0d204a",
-    },
-    disabled: {
-      text: "#f2f2f2",
-      background: "#adb5bd",
-      cursor: "cursor-not-allowed",
-    },
-    shadow: "none",
-    border: "#0d204a",
-    sideMenu: "#bababa",
-    highlightColors: lightDefaultTheme.colors.highlightColors,
-  },
-  borderRadius: 10,
-  fontFamily: "Helvetica Neue, sans-serif",
-} satisfies Theme;
-
-// Custom red dark theme
-const darkRedTheme = {
-  ...lightGrayTheme,
-  colors: {
-    ...lightGrayTheme.colors,
-    editor: {
-      text: "#ffffff",
-      background: "violet",
-    },
-    sideMenu: "violet",
-    // TODO: Update
-    highlightColors: darkDefaultTheme.colors.highlightColors,
-  },
-} satisfies Theme;
+import { RiText } from "react-icons/ri";
+import { BrainCircuit } from "lucide-react";
+import AIPromptDialog from "./AIPromptDialog";
+import { darkRedTheme, lightGrayTheme } from "@/utils/theme/Theme";
 
 // Combining the custom themes into a single theme object.
 const grayTheme = {
@@ -82,28 +42,134 @@ const getGrayTheme = (fontFamily: string) => ({
 });
 
 const Editor = () => {
-  const [fontSize, setFontSize] = useState("16px");
   const [fontFamily, setFontFamily] = useState("");
-  const editor = useBlockNote({});
 
-  const applyFontToSelectedLine = (fontFamily: string) => {
-    // Logic to apply the selected font family to the editor
-    setFontFamily(fontFamily);
-    // You might need to implement additional logic here to update the editor's content
+  function getCursorPosition() {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0).cloneRange();
+      range.collapse(true);
+      const rect = range.getClientRects()[0];
+      console.log("Cursor Position:", rect);
+      return rect;
+    }
+    console.log("No valid cursor position found");
+    return null;
+  }
+
+  // Creates a paragraph block with custom font.
+  const FontParagraphBlock = createReactBlockSpec(
+    {
+      type: "fontParagraph",
+      propSchema: {
+        ...defaultProps,
+        font: {
+          default: "Comic Sans MS",
+        },
+      },
+      content: "inline",
+    },
+    {
+      render: ({ block, contentRef }: any) => {
+        console.log("Rendering font block with font:", block.props.font);
+        const style = {
+          fontFamily: block.props.font,
+        };
+
+        return <p ref={contentRef} style={style} />;
+      },
+      toExternalHTML: ({ contentRef }: any) => <p ref={contentRef} />,
+      parse: (element: any) => {
+        const font = element.style.fontFamily;
+
+        if (font === "") {
+          return;
+        }
+
+        return {
+          font: font || undefined,
+        };
+      },
+    }
+  );
+
+  // Our block schema, which contains the configs for blocks that we want our
+  // editor to use.
+  const blockSchema = {
+    // Adds all default blocks.
+    ...defaultBlockSchema,
+    // Adds the font paragraph.
+    fontParagraph: FontParagraphBlock.config,
   };
+  // Our block specs, which contain the configs and implementations for blocks
+  // that we want our editor to use.
+  const blockSpecs = {
+    // Adds all default blocks.
+    ...defaultBlockSpecs,
+    // Adds the font paragraph.
+    fontParagraph: FontParagraphBlock,
+  };
+
+  // Creates a slash menu item for inserting a font paragraph block.
+  const insertFontParagraph: ReactSlashMenuItem<typeof blockSchema> = {
+    name: "Insert Font Paragraph",
+    execute: (editor) => {
+      const font = prompt("Enter font name");
+
+      editor.insertBlocks(
+        [
+          {
+            type: "fontParagraph",
+            props: {
+              font: font || undefined,
+            },
+          },
+        ],
+        editor.getTextCursorPosition().block,
+        "after"
+      );
+    },
+    aliases: ["p", "paragraph", "font"],
+    group: "Other",
+    icon: <RiText />,
+  };
+
+  // New Slash Command for AI Help
+  const getAIHelp: ReactSlashMenuItem<typeof blockSchema> = {
+    name: "Get AI Help",
+    execute: (editor) => {
+      console.log("Get AI Help Command Executed");
+    },
+    aliases: ["ai", "gpt", "help"],
+    group: "AI",
+    icon: <BrainCircuit />,
+  };
+
+  // Creates a new editor instance.
+  const editor = useBlockNote({
+    // Tells BlockNote which blocks to use.
+    blockSpecs: blockSpecs,
+    slashMenuItems: [
+      getAIHelp,
+      ...getDefaultReactSlashMenuItems(blockSchema),
+      insertFontParagraph,
+    ],
+  });
 
   return (
     <div className="w-full flex flex-col gap-10">
       <CustomToolbar
         editor={editor}
-        fontSize={fontSize}
         fontFamily={fontFamily}
-        setFontSize={setFontSize}
         setFontFamily={setFontFamily}
       />
-      <CustomFontSelector setFontFamily={applyFontToSelectedLine} />
+      {/* <CustomFontSelector editor={editor} /> */}
       <BlockNoteView editor={editor} theme={getGrayTheme(fontFamily)} />
-
+      {/* <div className="w-full flex justify-center">
+        <AIPromptDialog
+          onSubmit={handleAISubmission}
+        />
+      </div> */}
       {/* <BlockNoteView editor={editor} theme={grayTheme} /> */}
     </div>
   );

@@ -1,10 +1,25 @@
 "use client";
 import React, { useState } from "react";
-import { ToggledStyleButton, Toolbar } from "@blocknote/react";
+import {
+  ToggledStyleButton,
+  Toolbar,
+  getDefaultReactSlashMenuItems,
+} from "@blocknote/react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { BlockNoteEditor } from "@blocknote/core";
+import AIPromptDialog from "./AIPromptDialog";
+import { handleAISubmission } from "@/utils";
 
 interface MyCustomToolbarProps {
-  editor: BlockNoteEditor;
+  editor: any;
   fontSize: string;
   fontFamily: string;
   setFontSize: (size: string) => void;
@@ -45,6 +60,17 @@ const CustomToolbar = ({
     setFontFamily(event.target.value);
   };
 
+  // Extract default slash commands (assuming they're in a format you can use)
+  const defaultCommands = getDefaultReactSlashMenuItems();
+
+  // Handler for when a command is selected from the dropdown
+  const handleCommandSelect = (value: any) => {
+    const command = defaultCommands.find((c) => c.name === value);
+    if (command && editor) {
+      command.execute(editor);
+    }
+  };
+
   const buttonClass = (isActive: boolean) => {
     return `flex items-center rounded-lg transition-colors duration-200 ease-in-out ${
       isActive
@@ -54,7 +80,7 @@ const CustomToolbar = ({
   };
 
   return (
-    <Toolbar className="w-full flex gap-5">
+    <Toolbar className="w-full flex gap-10">
       <div className="flex gap-2">
         <span className={buttonClass(isBoldActive)} onClick={toggleBold}>
           <ToggledStyleButton editor={editor} toggledStyle="bold" />
@@ -69,22 +95,23 @@ const CustomToolbar = ({
           <ToggledStyleButton editor={editor} toggledStyle="underline" />
         </span>
       </div>
-      <div className="flex gap-2">
-        <select value={fontFamily} onChange={handleFontFamilyChange}>
-          {fontFamilies.map((fontFamily) => (
-            <option key={fontFamily} value={fontFamily}>
-              {fontFamily}
-            </option>
-          ))}
-        </select>
-
-        <select value={fontSize} onChange={handleFontSizeChange}>
-          {fontSizes.map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+      <Select onValueChange={handleCommandSelect}>
+        <SelectTrigger className="w-[200px]">
+          <SelectValue placeholder="Choose content type..." />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Content Types</SelectLabel>
+            {defaultCommands.map((command, index) => (
+              <SelectItem key={index} value={command.name}>
+                {command.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <div className="flex">
+        <AIPromptDialog onSubmit={handleAISubmission} />
       </div>
     </Toolbar>
   );
