@@ -12,6 +12,7 @@ import {
   Route,
   ListTodo,
   SlidersHorizontal,
+  BookOpenText,
 } from "lucide-react";
 import {
   Popover,
@@ -141,6 +142,13 @@ const AIPromptDialog = ({ onSubmit }: AIPromptDialogProps) => {
                   <div className="flex items-center justify-between gap-3">
                     <SlidersHorizontal />
                     <p className="font-bold">Default</p> <p> Most Balanced</p>
+                  </div>
+                </SelectItem>
+                <SelectItem value="essay">
+                  <div className="flex items-center justify-between gap-3">
+                    <BookOpenText />
+                    <p className="font-bold">essay</p>{" "}
+                    <p> informative and structured</p>
                   </div>
                 </SelectItem>
                 <SelectItem value="math">
