@@ -43,19 +43,6 @@ const CustomToolbar = ({
   const toggleItalic = () => setIsItalicActive(!isItalicActive);
   const toggleUnderline = () => setIsUnderlineActive(!isUnderlineActive);
 
-  // toggle font changes
-  const handleFontSizeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setFontSize(event.target.value);
-  };
-
-  const handleFontFamilyChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setFontFamily(event.target.value);
-  };
-
   // Extract default slash commands (assuming they're in a format you can use)
   const defaultCommands = getDefaultReactSlashMenuItems();
 
