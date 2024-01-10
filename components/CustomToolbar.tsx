@@ -17,6 +17,7 @@ import {
 import { BlockNoteEditor } from "@blocknote/core";
 import AIPromptDialog from "./AIPromptDialog";
 import { handleAISubmission } from "@/utils";
+import { Type } from "lucide-react";
 
 interface MyCustomToolbarProps {
   editor: any;
@@ -26,13 +27,8 @@ interface MyCustomToolbarProps {
   setFontFamily: (family: string) => void;
 }
 
-const fontSizes = ["12px", "14px", "16px", "18px", "20px"]; // Example font sizes
-const fontFamilies = ["Arial", "Times New Roman", "Georgia", "Courier New"]; // Example font families
-
 const CustomToolbar = ({
   editor,
-  fontSize,
-  fontFamily,
   setFontSize,
   setFontFamily,
 }: MyCustomToolbarProps) => {
@@ -96,7 +92,8 @@ const CustomToolbar = ({
         </span>
       </div>
       <Select onValueChange={handleCommandSelect}>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[240px]">
+          <Type size={18} color="#050505" />
           <SelectValue placeholder="Choose content type..." />
         </SelectTrigger>
         <SelectContent>
