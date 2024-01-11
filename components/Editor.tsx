@@ -1,5 +1,6 @@
 "use client";
 import {
+  Block,
   BlockNoteEditor,
   defaultBlockSchema,
   defaultBlockSpecs,
@@ -8,27 +9,18 @@ import {
 import {
   BlockNoteView,
   createReactBlockSpec,
-  darkDefaultTheme,
   getDefaultReactSlashMenuItems,
-  lightDefaultTheme,
   ReactSlashMenuItem,
-  Theme,
   useBlockNote,
 } from "@blocknote/react";
 import "@blocknote/core/style.css";
 import CustomToolbar from "./CustomToolbar";
-import { SetStateAction, useCallback, useRef, useState } from "react";
-import CustomFontSelector from "./CustomFontSelector";
+import { useEffect, useState } from "react";
 import { RiText } from "react-icons/ri";
 import { BrainCircuit } from "lucide-react";
-import AIPromptDialog from "./AIPromptDialog";
 import { darkRedTheme, lightGrayTheme } from "@/utils/theme/Theme";
-
-// Combining the custom themes into a single theme object.
-const grayTheme = {
-  light: lightGrayTheme,
-  dark: darkRedTheme,
-};
+import { useAIResponse } from "@/context/AIResponseContext";
+import MinimizableComponent from "./MinimizableComponent";
 
 const getGrayTheme = (fontFamily: string) => ({
   light: {
@@ -44,18 +36,7 @@ const getGrayTheme = (fontFamily: string) => ({
 const Editor = () => {
   const [fontFamily, setFontFamily] = useState("");
 
-  function getCursorPosition() {
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0).cloneRange();
-      range.collapse(true);
-      const rect = range.getClientRects()[0];
-      console.log("Cursor Position:", rect);
-      return rect;
-    }
-    console.log("No valid cursor position found");
-    return null;
-  }
+  const { introResponse } = useAIResponse();
 
   // Creates a paragraph block with custom font.
   const FontParagraphBlock = createReactBlockSpec(
@@ -156,6 +137,16 @@ const Editor = () => {
     ],
   });
 
+  useEffect(() => {
+    if (editor && introResponse) {
+      const updateEditorContent = async () => {
+        const blocks = await editor.tryParseMarkdownToBlocks(introResponse);
+        editor.replaceBlocks(editor.topLevelBlocks, blocks);
+      };
+      updateEditorContent();
+    }
+  }, [editor, introResponse]);
+
   return (
     <div className="w-full flex flex-col gap-10">
       <CustomToolbar
@@ -163,14 +154,10 @@ const Editor = () => {
         fontFamily={fontFamily}
         setFontFamily={setFontFamily}
       />
-      {/* <CustomFontSelector editor={editor} /> */}
       <BlockNoteView editor={editor} theme={getGrayTheme(fontFamily)} />
-      {/* <div className="w-full flex justify-center">
-        <AIPromptDialog
-          onSubmit={handleAISubmission}
-        />
-      </div> */}
-      {/* <BlockNoteView editor={editor} theme={grayTheme} /> */}
+      <div className="w-1/5 absolute bottom-0 right-8">
+        <MinimizableComponent />
+      </div>
     </div>
   );
 };

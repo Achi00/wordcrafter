@@ -1,10 +1,12 @@
 import Editor from "@/components/Editor";
-import Image from "next/image";
+import { AIResponseProvider } from "../context/AIResponseContext";
 
 export default function Home() {
   return (
-    <div className="flex w-full min-h-screen flex-col p-10">
-      <Editor />
-    </div>
+    <AIResponseProvider>
+      <div className="flex w-full min-h-screen flex-col p-10">
+        <Editor />
+      </div>
+    </AIResponseProvider>
   );
 }

@@ -14,10 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BlockNoteEditor } from "@blocknote/core";
 import AIPromptDialog from "./AIPromptDialog";
-import { handleAISubmission } from "@/utils";
 import { Type } from "lucide-react";
+import Menu from "./Menu";
 
 interface MyCustomToolbarProps {
   editor: any;
@@ -64,6 +63,7 @@ const CustomToolbar = ({
 
   return (
     <Toolbar className="w-full flex gap-10">
+      <Menu />
       <div className="flex gap-2">
         <span className={buttonClass(isBoldActive)} onClick={toggleBold}>
           <ToggledStyleButton editor={editor} toggledStyle="bold" />
@@ -95,7 +95,7 @@ const CustomToolbar = ({
         </SelectContent>
       </Select>
       <div className="flex">
-        <AIPromptDialog onSubmit={handleAISubmission} />
+        <AIPromptDialog />
       </div>
     </Toolbar>
   );

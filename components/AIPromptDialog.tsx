@@ -1,5 +1,6 @@
 "use clinet";
 import React, { useState } from "react";
+import { useAIResponse } from "../context/AIResponseContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,19 +33,20 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-interface AIPromptDialogProps {
-  onSubmit: (userInput: string) => void;
-}
+const AIPromptDialog = () => {
+  const { setIntroResponse, setTopicsResponse } = useAIResponse();
 
-const AIPromptDialog = ({ onSubmit }: AIPromptDialogProps) => {
   const [userInput, setUserInput] = useState("");
   const [selectedPreset, setSelectedPreset] = useState("default");
   const [showIcon, setshowIcon] = useState(true);
   const [chunks, setChunks] = useState<string>("");
+  const [topics, setTopics] = useState<string>("");
+  const [intro, setIntro] = useState<string>("");
 
   const handleSubmit = async () => {
     try {
-      setChunks("");
+      setTopicsResponse("");
+      setIntroResponse("");
       const response = await fetch("http://localhost:8080/startwithai", {
         method: "post",
         headers: {
@@ -62,21 +64,43 @@ const AIPromptDialog = ({ onSubmit }: AIPromptDialogProps) => {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = "";
 
       while (true) {
-        // Continuous loop for streaming
         const { value, done } = await reader.read();
         if (done) {
           break; // Stream completed
         }
 
-        const decodedChunk = decoder.decode(value);
-        // Handle each chunk directly (no need to store in state if processing immediately)
-        console.log(decodedChunk); // Example: Display each chunk in the console setChunks((chunk) => chunk + decodedChunk); // update state with new chunk
-        setChunks((chunk) => chunk + decodedChunk);
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split("\n");
+
+        // Process all chunks except the last, which might be incomplete
+        for (let i = 0; i < chunks.length - 1; i++) {
+          try {
+            const parsedChunk = JSON.parse(chunks[i]);
+            // Update state based on the type of chunk
+            if (parsedChunk.type === "topics") {
+              // Update state for topics
+              setTopicsResponse(
+                (prevTopics: string) => prevTopics + parsedChunk.content
+              );
+            } else if (parsedChunk.type === "intro") {
+              // Update state for intro paragraph
+              setIntroResponse(
+                (prevIntro: string) => prevIntro + parsedChunk.content
+              );
+            }
+          } catch (e) {
+            console.error("Error parsing chunk: ", e);
+          }
+        }
+
+        // Keep the last chunk in the buffer in case it's incomplete
+        buffer = chunks[chunks.length - 1];
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -97,12 +121,15 @@ const AIPromptDialog = ({ onSubmit }: AIPromptDialogProps) => {
         <PopoverContent className="w-80 mt-3">
           <div className="grid gap-4">
             <div className="space-y-2">
-              <h4 className="font-medium leading-none flex items-center">
-                <BrainCircuit /> AI Assistance
+              <h4 className="leading-none flex gap-2 items-center">
+                <BrainCircuit />
+                <h2 className="scroll-m-20 border-b text-xl font-semibold tracking-tight first:mt-0">
+                  AI Assistance
+                </h2>
               </h4>
               <p className="text-sm text-muted-foreground">
-                Enter your prompt below and the AI will assist you to start
-                writing.
+                Enter the topic you want to write about and AI will help you to
+                get started
               </p>
             </div>
             <div className="text-left">
@@ -115,16 +142,30 @@ const AIPromptDialog = ({ onSubmit }: AIPromptDialogProps) => {
                 <HoverCardContent className="w-80">
                   <div className="flex justify-between space-x-4">
                     <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">
-                        Get AI Help to Start Writing
-                      </h4>
-                      <p className="text-sm">
-                        The React Framework – created and maintained by @vercel.
+                      <h4 className="text-sm font-semibold">How To Use?</h4>
+                      <p className="text-sm flex flex-col gap-2">
+                        After submitting AI will start generating based on
+                        prompt and preset you choose, content will be in two
+                        parts.
+                        <br />
+                        <div className="w-full h-[1px] bg-gray-600"></div>
+                        1. General content
+                        <br />
+                        2. Topics to consider while writing
+                        <div className="w-full h-[1px] bg-gray-600"></div>
                       </p>
-                      <div className="flex items-center pt-2">
-                        <ListTodo className="mr-2 h-4 w-4 opacity-70" />{" "}
-                        <span className="text-xs text-muted-foreground">
-                          Joined December 2021
+                      <div className="flex items-center pt-2 gap-2">
+                        <ExternalLink size={16} color="#495057" />{" "}
+                        <span className="flex items-center text-md text-muted-foreground">
+                          <p className="text-black font-bold text-sm">
+                            For more details click
+                          </p>
+                          <Button
+                            variant="link"
+                            className="w-[50px] text-[#22337d]"
+                          >
+                            Here
+                          </Button>
                         </span>
                       </div>
                     </div>
@@ -187,10 +228,10 @@ const AIPromptDialog = ({ onSubmit }: AIPromptDialogProps) => {
           </div>
         </PopoverContent>
       </Popover>
-      {chunks !== "" ? (
-        <div className="border-t border-gray-300 pt-4">
-          <h2 className="text-xl font-bold mb-2">AI Response</h2>
-          <p>{chunks}</p>
+      {topics !== "" ? (
+        <div className="absolute w-1/3 bottom-0 border-t border-gray-300 pt-4">
+          <h2 className="text-xl font-bold mb-2">Topics</h2>
+          <p>{topics}</p>
         </div>
       ) : null}
     </>
