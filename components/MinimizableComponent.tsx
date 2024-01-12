@@ -5,29 +5,41 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { List, ScanSearch } from "lucide-react";
+import { Globe, List, ScanSearch } from "lucide-react";
 import { useAIResponse } from "../context/AIResponseContext";
-import { Separator } from "@/components/ui/separator";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Button } from "./ui/button";
+import { useState } from "react";
 
 const MinimizableComponent = () => {
   const { topicsResponse } = useAIResponse();
 
-  // Split the topicsResponse string into an array of topics
-  //   const topics = topicsResponse
-  //     .split(/(?=\d\.)/)
-  //     .map((topic: any) => topic.trim())
-  //     .filter(Boolean);
-  const topics = [
-    "Evolution of car design and technology in Formula 1",
-    "Current Formula 1 teams and manufacturers",
-    "Overview of the Formula 1 Grand Prix race format",
-    "Impact of regulations on Formula 1 competition",
-    "Profiles of leading Formula 1 drivers and their careers",
-  ];
+  //   Split the topicsResponse string into an array of topics
+  const topics = topicsResponse
+    .split(/(?=\d\.)/)
+    .map((topic: any) => topic.trim())
+    .filter(Boolean);
+  //   const topics = [
+  //     "Evolution of car design and technology in Formula 1",
+  //     "Current Formula 1 teams and manufacturers",
+  //     "Overview of the Formula 1 Grand Prix race format",
+  //     "Impact of regulations on Formula 1 competition",
+  //     "Profiles of leading Formula 1 drivers and their careers",
+  //   ];
+
+  const accordionKey = topicsResponse
+    ? "accordion-with-data"
+    : "accordion-empty";
+
   return (
     <Accordion
       type="single"
+      defaultValue={topicsResponse ? "item-1" : ""}
+      key={accordionKey}
       collapsible
       className="w-full bg-gray-200 rounded-t-2xl px-4"
     >
@@ -36,7 +48,7 @@ const MinimizableComponent = () => {
           <List /> Topics
         </AccordionTrigger>
         <AccordionContent>
-          {!topicsResponse ? (
+          {topicsResponse ? (
             <ul className="font-medium text-sm my-6 ml-6 list-disc [&>li]:mt-2">
               {topics.map((topic: string, index: number) => (
                 <li
@@ -46,9 +58,38 @@ const MinimizableComponent = () => {
                   <div className="w-full h-[1px] bg-gray-400"></div>
                   <div className="flex justify-between gap-3">
                     {topic}
-                    <Button className="w-10 h-10" variant="outline" size="icon">
-                      <ScanSearch />
-                    </Button>
+
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Button
+                          className="w-10 h-10 bg-transparent"
+                          variant="outline"
+                          size="icon"
+                        >
+                          <ScanSearch />
+                        </Button>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-80">
+                        <div className="flex justify-between space-x-4">
+                          <Globe />
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-semibold">
+                              Search on Web
+                            </h4>
+                            <p className="text-sm">
+                              The React Framework – created and maintained by
+                              @vercel.
+                            </p>
+                            <div className="flex items-center pt-2">
+                              <ScanSearch className="mr-2 h-4 w-4 opacity-70" />{" "}
+                              <span className="text-xs text-muted-foreground">
+                                Joined December 2021
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
                   </div>
                 </li>
               ))}

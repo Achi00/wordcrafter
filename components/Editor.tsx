@@ -21,6 +21,7 @@ import { BrainCircuit } from "lucide-react";
 import { darkRedTheme, lightGrayTheme } from "@/utils/theme/Theme";
 import { useAIResponse } from "@/context/AIResponseContext";
 import MinimizableComponent from "./MinimizableComponent";
+import AIExpandContent from "./AIExpandContent";
 
 const getGrayTheme = (fontFamily: string) => ({
   light: {
@@ -158,6 +159,7 @@ const Editor = () => {
       <div className="w-1/5 absolute bottom-0 right-8">
         <MinimizableComponent />
       </div>
+      <AIExpandContent />
     </div>
   );
 };

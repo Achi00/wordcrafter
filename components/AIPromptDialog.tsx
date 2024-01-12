@@ -14,6 +14,7 @@ import {
   ListTodo,
   SlidersHorizontal,
   BookOpenText,
+  Loader2,
 } from "lucide-react";
 import {
   Popover,
@@ -32,6 +33,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 const AIPromptDialog = () => {
   const { setIntroResponse, setTopicsResponse } = useAIResponse();
@@ -40,11 +42,11 @@ const AIPromptDialog = () => {
   const [selectedPreset, setSelectedPreset] = useState("default");
   const [showIcon, setshowIcon] = useState(true);
   const [chunks, setChunks] = useState<string>("");
-  const [topics, setTopics] = useState<string>("");
-  const [intro, setIntro] = useState<string>("");
+  const [loading, setloading] = useState(false);
 
   const handleSubmit = async () => {
     try {
+      setloading(true);
       setTopicsResponse("");
       setIntroResponse("");
       const response = await fetch("http://localhost:8080/startwithai", {
@@ -99,6 +101,7 @@ const AIPromptDialog = () => {
         // Keep the last chunk in the buffer in case it's incomplete
         buffer = chunks[chunks.length - 1];
       }
+      setloading(false);
     } catch (error) {
       console.error(error);
     }
@@ -220,20 +223,29 @@ const AIPromptDialog = () => {
                   placeholder="Type something..."
                   autoFocus
                 />
-                <Button onClick={handleSubmit}>
-                  <SendHorizontal className="mr-2 h-4 w-4" /> Submit
-                </Button>
+                <PopoverClose asChild>
+                  <Button onClick={handleSubmit} disabled={loading}>
+                    {loading ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Please wait
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        <SendHorizontal className="mr-2 h-4 w-4" /> Submit
+                      </div>
+                    )}
+                  </Button>
+                  {/* <Button disabled={loading}>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </Button> */}
+                </PopoverClose>
               </div>
             </div>
           </div>
         </PopoverContent>
       </Popover>
-      {topics !== "" ? (
-        <div className="absolute w-1/3 bottom-0 border-t border-gray-300 pt-4">
-          <h2 className="text-xl font-bold mb-2">Topics</h2>
-          <p>{topics}</p>
-        </div>
-      ) : null}
     </>
   );
 };
