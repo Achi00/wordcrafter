@@ -1,5 +1,5 @@
 "use clinet";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   AArrowUp,
   AlertTriangle,
@@ -8,24 +8,95 @@ import {
   PencilRuler,
   Sparkle,
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useAIResponse } from "@/context/AIResponseContext";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+import SummarizerDrawer from "../UiComponents/SummarizerDrawer";
 
 const AISummarizeContent = ({ editor }: any) => {
-  const [isLoading, setisLoading] = useState(false);
-  const { isContentAvailable } = useAIResponse();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { isContentAvailable, contentSummarize, setSummarizedContent } =
+    useAIResponse();
+
+  // check for content in editor
+  const getContentFromEditor = useCallback(() => {
+    const blocks = editor.topLevelBlocks as any;
+    let content = "";
+
+    blocks.forEach((block: any) => {
+      if (block.content && block.content.length > 0 && block.content[0].text) {
+        content += block.content[0].text + "\n";
+      }
+    });
+
+    return content;
+  }, [editor]);
+
+  const handleSubmitToServer = async () => {
+    const content = getContentFromEditor();
+    try {
+      setIsLoading(true);
+      setIsDrawerOpen(true);
+      const response = await fetch("http://localhost:8080/summarizewithai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }), // Send the editor content
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error("Failed to fetch");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          break; // Stream completed
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split("\n");
+
+        for (let i = 0; i < chunks.length - 1; i++) {
+          try {
+            const parsedChunk = JSON.parse(chunks[i]);
+            if (parsedChunk.type === "summary") {
+              // Append new chunk to cumulative content
+              setSummarizedContent(
+                (prevExtend: string) => prevExtend + parsedChunk.content
+              );
+              console.log(parsedChunk.content);
+            }
+          } catch (e) {
+            console.error("Error parsing chunk: ", e);
+          }
+        }
+
+        buffer = chunks[chunks.length - 1];
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error sending content to server:", error);
+    }
+  };
   return (
-    <div className="relative">
+    <div className="relative flex">
       <HoverCard>
         <HoverCardTrigger asChild>
           <span tabIndex={0}>
             <Button
+              onClick={handleSubmitToServer}
               disabled={!isContentAvailable || isLoading}
               variant="outline"
               className="flex items-center gap-2"
@@ -200,6 +271,12 @@ const AISummarizeContent = ({ editor }: any) => {
           </>
         )}
       </HoverCard>
+      <SummarizerDrawer
+        contentSummarize={contentSummarize}
+        isLoading={isLoading}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
     </div>
   );
 };

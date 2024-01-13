@@ -6,13 +6,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { BrainCircuit, Globe, List, ScanSearch } from "lucide-react";
-import { useAIResponse } from "../context/AIResponseContext";
+import { useAIResponse } from "../../context/AIResponseContext";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useState } from "react";
 
 const MinimizableComponent = () => {

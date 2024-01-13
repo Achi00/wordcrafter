@@ -14,13 +14,13 @@ import {
   useBlockNote,
 } from "@blocknote/react";
 import "@blocknote/core/style.css";
-import CustomToolbar from "./CustomToolbar";
+import CustomToolbar from "./UiComponents/CustomToolbar";
 import { useEffect, useState } from "react";
 import { RiText } from "react-icons/ri";
 import { BrainCircuit } from "lucide-react";
 import { darkRedTheme, lightGrayTheme } from "@/utils/theme/Theme";
 import { useAIResponse } from "@/context/AIResponseContext";
-import MinimizableComponent from "./MinimizableComponent";
+import MinimizableComponent from "./UiComponents/MinimizableComponent";
 
 const getGrayTheme = (fontFamily: string) => ({
   light: {

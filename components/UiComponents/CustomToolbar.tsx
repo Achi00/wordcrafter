@@ -15,11 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import AIPromptDialog from "./AIPromptDialog";
+import AIPromptDialog from "../AIFeatures/AIPromptDialog";
 import { Type } from "lucide-react";
 import Menu from "./Menu";
-import AIExpandContent from "./AIExpandContent";
-import AISummarizeContent from "./AISummarizeContent";
+import AIExpandContent from "../AIFeatures/AIExpandContent";
+import AISummarizeContent from "../AIFeatures/AISummarizeContent";
 
 interface MyCustomToolbarProps {
   editor: any;

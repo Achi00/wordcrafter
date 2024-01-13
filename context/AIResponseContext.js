@@ -8,12 +8,19 @@ export const useAIResponse = () => useContext(AIResponseContext);
 export const AIResponseProvider = ({ children }) => {
   const [introResponse, setIntroResponse] = useState("");
   const [topicsResponse, setTopicsResponse] = useState("");
+  // for ai expand feature
   // pass content from editor to component
   const [contentToExpand, setContentToExpand] = useState("");
   // pass content from component to editor
   const [expandedContent, setExpandedContent] = useState("");
   const setExpandContent = (content) => {
     setContentToExpand(content);
+  };
+  // for ai summarize feature
+  const [contentSummarize, setContentSummarize] = useState("");
+
+  const setSummarizedContent = (content) => {
+    setContentSummarize(content);
   };
 
   // for content checking in editor
@@ -30,6 +37,9 @@ export const AIResponseProvider = ({ children }) => {
     setExpandedContent,
     isContentAvailable,
     setIsContentAvailable,
+    contentSummarize,
+    setContentSummarize,
+    setSummarizedContent,
   };
 
   return (
