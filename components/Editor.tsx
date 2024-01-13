@@ -21,7 +21,6 @@ import { BrainCircuit } from "lucide-react";
 import { darkRedTheme, lightGrayTheme } from "@/utils/theme/Theme";
 import { useAIResponse } from "@/context/AIResponseContext";
 import MinimizableComponent from "./MinimizableComponent";
-import AIExpandContent from "./AIExpandContent";
 
 const getGrayTheme = (fontFamily: string) => ({
   light: {
@@ -37,7 +36,7 @@ const getGrayTheme = (fontFamily: string) => ({
 const Editor = () => {
   const [fontFamily, setFontFamily] = useState("");
 
-  const { introResponse } = useAIResponse();
+  const { introResponse, expandedContent } = useAIResponse();
 
   // Creates a paragraph block with custom font.
   const FontParagraphBlock = createReactBlockSpec(
@@ -138,6 +137,7 @@ const Editor = () => {
     ],
   });
 
+  // add ai generated content into editor
   useEffect(() => {
     if (editor && introResponse) {
       const updateEditorContent = async () => {
@@ -147,6 +147,36 @@ const Editor = () => {
       updateEditorContent();
     }
   }, [editor, introResponse]);
+
+  // add ai generated expanded content into editor
+  useEffect(() => {
+    if (editor && expandedContent) {
+      const updateEditorContent = async () => {
+        const blocks = await editor.tryParseMarkdownToBlocks(expandedContent);
+        editor.replaceBlocks(editor.topLevelBlocks, blocks);
+      };
+      updateEditorContent();
+    }
+  }, [editor, expandedContent]);
+
+  // get content from editor and send to server
+  const getContentFromEditor = () => {
+    const blocks = editor.topLevelBlocks as any;
+    let content = "";
+
+    blocks.forEach((block: any) => {
+      if (block.content && block.content.length > 0 && block.content[0].text) {
+        content += block.content[0].text + "\n";
+      }
+    });
+
+    return content;
+  };
+
+  const handleGetContentForLogging = () => {
+    const currentContent = getContentFromEditor();
+    console.log(currentContent);
+  };
 
   return (
     <div className="w-full flex flex-col gap-10">
@@ -159,7 +189,6 @@ const Editor = () => {
       <div className="w-1/5 absolute bottom-0 right-8">
         <MinimizableComponent />
       </div>
-      <AIExpandContent />
     </div>
   );
 };

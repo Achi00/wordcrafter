@@ -14,23 +14,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import AIPromptDialog from "./AIPromptDialog";
 import { Type } from "lucide-react";
 import Menu from "./Menu";
+import AIExpandContent from "./AIExpandContent";
 
 interface MyCustomToolbarProps {
   editor: any;
-  fontSize: string;
+
   fontFamily: string;
-  setFontSize: (size: string) => void;
   setFontFamily: (family: string) => void;
 }
 
-const CustomToolbar = ({
-  editor,
-  setFontSize,
-  setFontFamily,
-}: MyCustomToolbarProps) => {
+const CustomToolbar = ({ editor }: MyCustomToolbarProps) => {
   // if bold, italic or underline is activated
   const [isBoldActive, setIsBoldActive] = useState(false);
   const [isItalicActive, setIsItalicActive] = useState(false);
@@ -94,8 +91,10 @@ const CustomToolbar = ({
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex">
+      <div className="flex gap-2 items-center">
         <AIPromptDialog />
+        <div className="w-[1px] h-7 bg-gray-500"></div>
+        <AIExpandContent editor={editor} />
       </div>
       <div className="w-full h-[1px] bg-gray-500"></div>
     </Toolbar>

@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   BookOpenText,
   Loader2,
+  BrainCircuitIcon,
 } from "lucide-react";
 import {
   Popover,
@@ -41,7 +42,6 @@ const AIPromptDialog = () => {
   const [userInput, setUserInput] = useState("");
   const [selectedPreset, setSelectedPreset] = useState("default");
   const [showIcon, setshowIcon] = useState(true);
-  const [chunks, setChunks] = useState<string>("");
   const [loading, setloading] = useState(false);
 
   const handleSubmit = async () => {
@@ -139,39 +139,41 @@ const AIPromptDialog = () => {
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <Button variant="link" className="flex gap-2 text-[#495057]">
-                    <ExternalLink size={11} color="#495057" /> How To Use?
+                    <ExternalLink size={11} color="#495057" /> How To Use AI
+                    Assistance?
                   </Button>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-80">
-                  <div className="flex justify-between space-x-4">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">How To Use?</h4>
-                      <p className="text-sm flex flex-col gap-2">
-                        After submitting AI will start generating based on
-                        prompt and preset you choose, content will be in two
-                        parts.
-                        <br />
-                        <div className="w-full h-[1px] bg-gray-600"></div>
-                        1. General content
-                        <br />
-                        2. Topics to consider while writing
-                        <div className="w-full h-[1px] bg-gray-600"></div>
-                      </p>
-                      <div className="flex items-center pt-2 gap-2">
-                        <ExternalLink size={16} color="#495057" />{" "}
-                        <span className="flex items-center text-md text-muted-foreground">
-                          <p className="text-black font-bold text-sm">
-                            For more details click
-                          </p>
-                          <Button
-                            variant="link"
-                            className="w-[50px] text-[#22337d]"
-                          >
-                            Here
-                          </Button>
-                        </span>
-                      </div>
-                    </div>
+                  <div className="space-y-3">
+                    <h4 className="text-lg font-semibold">
+                      AI Writing Assistant
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Kickstart your writing process with the push of a button.
+                      Enter a topic, and let AI craft a beginning to inspire
+                      your work.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>
+                        <span className="font-medium">Enter a Prompt:</span>{" "}
+                        Start with a word, question, or sentence.
+                      </li>
+                      <li>
+                        <span className="font-medium">Generate Content:</span>{" "}
+                        Receive AI-generated text to develop your ideas.
+                      </li>
+                      <li>
+                        <span className="font-medium">Recive Topics:</span>{" "}
+                        After submission, you will also receive a list of topics
+                        that you can consider when writing.
+                      </li>
+                    </ul>
+                    <a
+                      href="#"
+                      className="text-indigo-600 hover:underline flex items-center"
+                    >
+                      <ExternalLink size={16} className="mr-1" /> Get more tips
+                    </a>
                   </div>
                 </HoverCardContent>
               </HoverCard>
