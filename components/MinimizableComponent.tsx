@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Globe, List, ScanSearch } from "lucide-react";
+import { BrainCircuit, Globe, List, ScanSearch } from "lucide-react";
 import { useAIResponse } from "../context/AIResponseContext";
 import {
   HoverCard,
@@ -41,7 +41,7 @@ const MinimizableComponent = () => {
       defaultValue={topicsResponse ? "item-1" : ""}
       key={accordionKey}
       collapsible
-      className="w-full bg-gray-200 rounded-t-2xl px-4"
+      className="w-full bg-white border border-gray-400 dropShadow-3xl rounded-t-2xl px-4"
     >
       <AccordionItem value="item-1">
         <AccordionTrigger>
@@ -99,8 +99,14 @@ const MinimizableComponent = () => {
               <p className="text-xl text-center text-muted-foreground">
                 No Topics Yet.
               </p>
-              <p className="text-md text-center text-gray-400">
-                Topics will be displayed after generating content
+              <p className="text-md text-center flex flex-col items-center justify-center text-gray-400">
+                Topics will be displayed after you generate content with
+                <Button
+                  variant="outline"
+                  className="flex text-sm items-center gap-2"
+                >
+                  <BrainCircuit size={14} /> Get AI Help
+                </Button>
               </p>
             </div>
           )}

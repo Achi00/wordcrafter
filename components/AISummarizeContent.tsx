@@ -1,99 +1,31 @@
-"use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { Button } from "./ui/button";
+"use clinet";
+import { useState } from "react";
 import {
   AArrowUp,
   AlertTriangle,
   ExternalLink,
   Loader2,
+  PencilRuler,
   Sparkle,
 } from "lucide-react";
+import { Button } from "./ui/button";
 import { useAIResponse } from "@/context/AIResponseContext";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 
-const AIExpandContent = ({ editor }: any) => {
-  const { setExpandedContent, expandedContent, isContentAvailable } =
-    useAIResponse();
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  // check for content in editor
-  const getContentFromEditor = useCallback(() => {
-    const blocks = editor.topLevelBlocks as any;
-    let content = "";
-
-    blocks.forEach((block: any) => {
-      if (block.content && block.content.length > 0 && block.content[0].text) {
-        content += block.content[0].text + "\n";
-      }
-    });
-
-    return content;
-  }, [editor]);
-
-  const handleSubmitToServer = async () => {
-    const content = getContentFromEditor();
-    try {
-      setIsLoading(true);
-      const response = await fetch("http://localhost:8080/expandwithai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content }), // Send the editor content
-      });
-
-      if (!response.ok || !response.body) {
-        throw new Error("Failed to fetch");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) {
-          break; // Stream completed
-        }
-
-        buffer += decoder.decode(value, { stream: true });
-        const chunks = buffer.split("\n");
-
-        for (let i = 0; i < chunks.length - 1; i++) {
-          try {
-            const parsedChunk = JSON.parse(chunks[i]);
-            if (parsedChunk.type === "expand") {
-              // Append new chunk to cumulative content
-              setExpandedContent(
-                (prevExtend: string) => prevExtend + parsedChunk.content
-              );
-            }
-          } catch (e) {
-            console.error("Error parsing chunk: ", e);
-          }
-        }
-
-        buffer = chunks[chunks.length - 1];
-      }
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error sending content to server:", error);
-    }
-  };
-
+const AISummarizeContent = ({ editor }: any) => {
+  const [isLoading, setisLoading] = useState(false);
+  const { isContentAvailable } = useAIResponse();
   return (
     <div className="relative">
       <HoverCard>
         <HoverCardTrigger asChild>
           <span tabIndex={0}>
             <Button
-              onClick={handleSubmitToServer}
               disabled={!isContentAvailable || isLoading}
               variant="outline"
               className="flex items-center gap-2"
@@ -107,10 +39,10 @@ const AIExpandContent = ({ editor }: any) => {
                 <>
                   <div className="flex items-center">
                     <Sparkle size={12} className="self-start" />
-                    <AArrowUp />
+                    <PencilRuler />
                     <Sparkle size={12} className="self-end" />
                   </div>{" "}
-                  Expand Writing
+                  Summerize Content
                 </>
               )}
             </Button>
@@ -124,7 +56,7 @@ const AIExpandContent = ({ editor }: any) => {
                   Processing Your Request
                 </h4>
                 <p className="text-sm text-gray-600">
-                  AI is currently enhancing your content. This may take a
+                  AI is currently summarizing your content. This may take a
                   moment. Please be patient as the AI generates insights and
                   expands upon your text.
                 </p>
@@ -142,7 +74,7 @@ const AIExpandContent = ({ editor }: any) => {
             ) : (
               <div className="space-y-3">
                 <h4 className="text-lg font-semibold">
-                  Expand Content with AI
+                  Summarize Content with AI
                 </h4>
                 <p className="text-sm text-gray-600">
                   <Alert variant="destructive">
@@ -170,7 +102,7 @@ const AIExpandContent = ({ editor }: any) => {
                           <AArrowUp size={18} />
                           <Sparkle size={10} className="self-end" />
                         </div>{" "}
-                        Expand Writing
+                        Summarize Content
                       </Button>
                     </span>
                   </li>
@@ -221,7 +153,7 @@ const AIExpandContent = ({ editor }: any) => {
               ) : (
                 <div className="space-y-3">
                   <h4 className="text-lg font-semibold">
-                    Expand Content with AI
+                    Summarize Content with AI
                   </h4>
                   <p className="text-sm text-gray-600">
                     Quickly enhance your text with insights and analysis
@@ -268,9 +200,8 @@ const AIExpandContent = ({ editor }: any) => {
           </>
         )}
       </HoverCard>
-      {expandedContent && <p>{expandedContent?.content}</p>}
     </div>
   );
 };
 
-export default AIExpandContent;
+export default AISummarizeContent;

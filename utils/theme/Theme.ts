@@ -8,8 +8,8 @@ export const lightGrayTheme = {
       background: "#ffffff",
     },
     menu: {
-      text: "#ffffff",
-      background: "#050B18",
+      text: "#000",
+      background: "#ced4da",
     },
     tooltip: {
       text: "#ffffff",
@@ -17,11 +17,11 @@ export const lightGrayTheme = {
     },
     hovered: {
       text: "#ffffff",
-      background: "#0d204a",
+      background: "#adb5bd",
     },
     selected: {
       text: "#ffffff",
-      background: "#0d204a",
+      background: "#000",
     },
     disabled: {
       text: "#f2f2f2",

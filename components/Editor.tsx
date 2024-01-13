@@ -36,7 +36,8 @@ const getGrayTheme = (fontFamily: string) => ({
 const Editor = () => {
   const [fontFamily, setFontFamily] = useState("");
 
-  const { introResponse, expandedContent } = useAIResponse();
+  const { introResponse, expandedContent, setIsContentAvailable } =
+    useAIResponse();
 
   // Creates a paragraph block with custom font.
   const FontParagraphBlock = createReactBlockSpec(
@@ -128,14 +129,33 @@ const Editor = () => {
 
   // Creates a new editor instance.
   const editor = useBlockNote({
+    // on editor change
+    onEditorContentChange: (editor) => {
+      // Call your function that checks for content and sets the state
+      const content = getContentFromEditor(editor);
+      setIsContentAvailable(content.trim() !== "");
+    },
     // Tells BlockNote which blocks to use.
     blockSpecs: blockSpecs,
     slashMenuItems: [
-      getAIHelp,
+      // getAIHelp,
       ...getDefaultReactSlashMenuItems(blockSchema),
-      insertFontParagraph,
+      // insertFontParagraph,
     ],
   });
+
+  const getContentFromEditor = (editor: any) => {
+    const blocks = editor.topLevelBlocks;
+    let content = "";
+
+    blocks.forEach((block: any) => {
+      if (block.content && block.content.length > 0 && block.content[0].text) {
+        content += block.content[0].text + "\n";
+      }
+    });
+
+    return content;
+  };
 
   // add ai generated content into editor
   useEffect(() => {
@@ -159,25 +179,6 @@ const Editor = () => {
     }
   }, [editor, expandedContent]);
 
-  // get content from editor and send to server
-  const getContentFromEditor = () => {
-    const blocks = editor.topLevelBlocks as any;
-    let content = "";
-
-    blocks.forEach((block: any) => {
-      if (block.content && block.content.length > 0 && block.content[0].text) {
-        content += block.content[0].text + "\n";
-      }
-    });
-
-    return content;
-  };
-
-  const handleGetContentForLogging = () => {
-    const currentContent = getContentFromEditor();
-    console.log(currentContent);
-  };
-
   return (
     <div className="w-full flex flex-col gap-10">
       <CustomToolbar
@@ -185,7 +186,7 @@ const Editor = () => {
         fontFamily={fontFamily}
         setFontFamily={setFontFamily}
       />
-      <BlockNoteView editor={editor} theme={getGrayTheme(fontFamily)} />
+      <BlockNoteView editor={editor} />
       <div className="w-1/5 absolute bottom-0 right-8">
         <MinimizableComponent />
       </div>

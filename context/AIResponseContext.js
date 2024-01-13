@@ -16,6 +16,9 @@ export const AIResponseProvider = ({ children }) => {
     setContentToExpand(content);
   };
 
+  // for content checking in editor
+  const [isContentAvailable, setIsContentAvailable] = useState(false);
+
   const value = {
     introResponse,
     setIntroResponse,
@@ -25,6 +28,8 @@ export const AIResponseProvider = ({ children }) => {
     contentToExpand,
     expandedContent,
     setExpandedContent,
+    isContentAvailable,
+    setIsContentAvailable,
   };
 
   return (

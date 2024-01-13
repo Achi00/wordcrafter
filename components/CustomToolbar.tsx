@@ -19,6 +19,7 @@ import AIPromptDialog from "./AIPromptDialog";
 import { Type } from "lucide-react";
 import Menu from "./Menu";
 import AIExpandContent from "./AIExpandContent";
+import AISummarizeContent from "./AISummarizeContent";
 
 interface MyCustomToolbarProps {
   editor: any;
@@ -53,8 +54,8 @@ const CustomToolbar = ({ editor }: MyCustomToolbarProps) => {
   const buttonClass = (isActive: boolean) => {
     return `flex items-center rounded-lg transition-colors duration-200 ease-in-out ${
       isActive
-        ? "bg-[#0d204a] text-white hover:bg-[#0d204a]"
-        : "bg-gray-100  hover:bg-gray-200 text-black"
+        ? "bg-[#fff] text-white hover:bg-gray-700"
+        : "bg-gray-100  hover:bg-gray-700 text-black"
     }`;
   };
 
@@ -91,10 +92,12 @@ const CustomToolbar = ({ editor }: MyCustomToolbarProps) => {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex gap-2 items-center">
+      <div className="flex relative z-50 gap-2 items-center">
         <AIPromptDialog />
         <div className="w-[1px] h-7 bg-gray-500"></div>
         <AIExpandContent editor={editor} />
+        <div className="w-[1px] h-7 bg-gray-500"></div>
+        <AISummarizeContent editor={editor} />
       </div>
       <div className="w-full h-[1px] bg-gray-500"></div>
     </Toolbar>
