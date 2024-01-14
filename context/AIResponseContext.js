@@ -18,9 +18,13 @@ export const AIResponseProvider = ({ children }) => {
   };
   // for ai summarize feature
   const [contentSummarize, setContentSummarize] = useState("");
+  const [contentSummarizeList, setContentSummarizeList] = useState("");
 
   const setSummarizedContent = (content) => {
     setContentSummarize(content);
+  };
+  const setSummarizedContentList = (content) => {
+    setContentSummarizeList(content);
   };
 
   // for content checking in editor
@@ -40,6 +44,9 @@ export const AIResponseProvider = ({ children }) => {
     contentSummarize,
     setContentSummarize,
     setSummarizedContent,
+    contentSummarizeList,
+    setContentSummarizeList,
+    setSummarizedContentList,
   };
 
   return (

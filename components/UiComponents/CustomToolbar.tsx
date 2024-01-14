@@ -60,46 +60,55 @@ const CustomToolbar = ({ editor }: MyCustomToolbarProps) => {
   };
 
   return (
-    <Toolbar className="w-full flex gap-10">
-      <Menu />
-      <div className="flex gap-2">
-        <span className={buttonClass(isBoldActive)} onClick={toggleBold}>
-          <ToggledStyleButton editor={editor} toggledStyle="bold" />
-        </span>
-        <span className={buttonClass(isItalicActive)} onClick={toggleItalic}>
-          <ToggledStyleButton editor={editor} toggledStyle="italic" />
-        </span>
-        <span
-          className={buttonClass(isUnderlineActive)}
-          onClick={toggleUnderline}
-        >
-          <ToggledStyleButton editor={editor} toggledStyle="underline" />
-        </span>
+    <Toolbar>
+      <div className="w-full flex justify-between items-center gap-5 flex-wrap">
+        <div className="flex flex-wrap gap-2 justify-center p-5">
+          <Menu />
+          <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex gap-2 items-center justify-center">
+              <span className={buttonClass(isBoldActive)} onClick={toggleBold}>
+                <ToggledStyleButton editor={editor} toggledStyle="bold" />
+              </span>
+              <span
+                className={buttonClass(isItalicActive)}
+                onClick={toggleItalic}
+              >
+                <ToggledStyleButton editor={editor} toggledStyle="italic" />
+              </span>
+              <span
+                className={buttonClass(isUnderlineActive)}
+                onClick={toggleUnderline}
+              >
+                <ToggledStyleButton editor={editor} toggledStyle="underline" />
+              </span>
+            </div>
+            <Select onValueChange={handleCommandSelect}>
+              <SelectTrigger className="w-[240px]">
+                <Type size={18} color="#050505" />
+                <SelectValue placeholder="Choose content type..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Content Types</SelectLabel>
+                  {defaultCommands.map((command, index) => (
+                    <SelectItem key={index} value={command.name}>
+                      {command.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex relative z-50 gap-2 justify-center items-center flex-wrap p-5">
+          <AIPromptDialog />
+          <div className="w-[1px] h-7 bg-gray-500"></div>
+          <AIExpandContent editor={editor} />
+          <div className="w-[1px] h-7 bg-gray-500"></div>
+          <AISummarizeContent editor={editor} />
+        </div>
+        <div className="w-full h-[1px] bg-gray-500"></div>
       </div>
-      <Select onValueChange={handleCommandSelect}>
-        <SelectTrigger className="w-[240px]">
-          <Type size={18} color="#050505" />
-          <SelectValue placeholder="Choose content type..." />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Content Types</SelectLabel>
-            {defaultCommands.map((command, index) => (
-              <SelectItem key={index} value={command.name}>
-                {command.name}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <div className="flex relative z-50 gap-2 items-center">
-        <AIPromptDialog />
-        <div className="w-[1px] h-7 bg-gray-500"></div>
-        <AIExpandContent editor={editor} />
-        <div className="w-[1px] h-7 bg-gray-500"></div>
-        <AISummarizeContent editor={editor} />
-      </div>
-      <div className="w-full h-[1px] bg-gray-500"></div>
     </Toolbar>
   );
 };

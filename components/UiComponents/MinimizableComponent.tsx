@@ -23,13 +23,6 @@ const MinimizableComponent = () => {
     .split(/(?=\d\.)/)
     .map((topic: any) => topic.trim())
     .filter(Boolean);
-  //   const topics = [
-  //     "Evolution of car design and technology in Formula 1",
-  //     "Current Formula 1 teams and manufacturers",
-  //     "Overview of the Formula 1 Grand Prix race format",
-  //     "Impact of regulations on Formula 1 competition",
-  //     "Profiles of leading Formula 1 drivers and their careers",
-  //   ];
 
   const accordionKey = topicsResponse
     ? "accordion-with-data"

@@ -4,7 +4,7 @@ import { AIResponseProvider } from "../context/AIResponseContext";
 export default function Home() {
   return (
     <AIResponseProvider>
-      <div className="flex w-full min-h-screen flex-col p-10">
+      <div className="flex w-full min-h-screen flex-col">
         <Editor />
       </div>
     </AIResponseProvider>

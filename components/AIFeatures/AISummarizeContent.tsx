@@ -21,8 +21,13 @@ import SummarizerDrawer from "../UiComponents/SummarizerDrawer";
 const AISummarizeContent = ({ editor }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { isContentAvailable, contentSummarize, setSummarizedContent } =
-    useAIResponse();
+  const {
+    isContentAvailable,
+    contentSummarize,
+    contentSummarizeList,
+    setSummarizedContent,
+    setSummarizedContentList,
+  } = useAIResponse();
 
   // check for content in editor
   const getContentFromEditor = useCallback(() => {
@@ -73,10 +78,21 @@ const AISummarizeContent = ({ editor }: any) => {
             const parsedChunk = JSON.parse(chunks[i]);
             if (parsedChunk.type === "summary") {
               // Append new chunk to cumulative content
-              setSummarizedContent(
-                (prevExtend: string) => prevExtend + parsedChunk.content
-              );
-              console.log(parsedChunk.content);
+              setSummarizedContent((prevExtend: string) => {
+                const updatedContent = prevExtend + parsedChunk.content;
+                console.log("Updated summary content:", updatedContent);
+                return updatedContent;
+              });
+            }
+            if (parsedChunk.type === "summaryList") {
+              setSummarizedContentList((prevContent: string) => {
+                const updatedListContent = prevContent + parsedChunk.content;
+                console.log(
+                  "Updated summary list content:",
+                  updatedListContent
+                );
+                return updatedListContent;
+              });
             }
           } catch (e) {
             console.error("Error parsing chunk: ", e);
@@ -273,6 +289,7 @@ const AISummarizeContent = ({ editor }: any) => {
       </HoverCard>
       <SummarizerDrawer
         contentSummarize={contentSummarize}
+        contentSummarizeList={contentSummarizeList}
         isLoading={isLoading}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
