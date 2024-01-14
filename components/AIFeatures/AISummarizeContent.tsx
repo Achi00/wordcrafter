@@ -80,17 +80,17 @@ const AISummarizeContent = ({ editor }: any) => {
               // Append new chunk to cumulative content
               setSummarizedContent((prevExtend: string) => {
                 const updatedContent = prevExtend + parsedChunk.content;
-                console.log("Updated summary content:", updatedContent);
+                // console.log("Updated summary content:", updatedContent);
                 return updatedContent;
               });
             }
             if (parsedChunk.type === "summaryList") {
               setSummarizedContentList((prevContent: string) => {
                 const updatedListContent = prevContent + parsedChunk.content;
-                console.log(
-                  "Updated summary list content:",
-                  updatedListContent
-                );
+                // console.log(
+                //   "Updated summary list content:",
+                //   updatedListContent
+                // );
                 return updatedListContent;
               });
             }
