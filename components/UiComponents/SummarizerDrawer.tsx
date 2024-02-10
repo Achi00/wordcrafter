@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ExternalLink,
   Loader2,
+  PanelLeftOpen,
   PanelRightOpen,
   PencilRuler,
   Sparkle,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Loading from "./Loading";
 
 interface DrawerTypes {
   contentSummarize: string;
@@ -32,7 +34,9 @@ const SummarizerDrawer = ({
     setIsDrawerOpen(open);
   };
 
-  console.log("drawer console" + contentSummarizeList);
+  // let isLoading = true;
+  // const contentSummarize =
+  //   "The Porsche 911 GT3 is a high-performance sports car that is part of the renowned 911 lineup by the German automaker, Porsche. It is specifically designed for track performance while still being road-legal. Below is an expanded discussion on its engine, bodywork, suspension, and lap times.";
 
   return (
     <div className="relative">
@@ -62,47 +66,20 @@ const SummarizerDrawer = ({
             </Button>
           </div>
           {isLoading && (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please wait
-            </Button>
+            // <Button disabled>
+            //   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            //   Please wait
+            // </Button>
+            <div className="flex w-full items-center justify-center">
+              <Loading />
+            </div>
           )}
           {contentSummarize ? (
-            <ScrollArea className="h-[80vh] w-full rounded-md border px-4 py-5">
-              {isLoading && (
-                <Button disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Please wait
-                </Button>
-              )}
-              {!contentSummarize ||
+            <ScrollArea className="h-[80vh] w-full rounded-md border px-4 py-5 drop-shadow-xl">
+              {/* {!contentSummarize ||
                 (!contentSummarizeList && (
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle className="font-bold">
-                      Summerize Content
-                    </AlertTitle>
-                    <AlertDescription className="flex flex-col items-center justify-center">
-                      <p className="leading-7 text-lg [&:not(:first-child)]:mt-6">
-                        No content yet, Content will appare after you
-                        <div className="flex gap-2 items-center">
-                          click
-                          <Button
-                            variant="outline"
-                            className="flex text-sm items-center gap-1"
-                          >
-                            <div className="flex items-center">
-                              <Sparkle size={10} className="self-start" />
-                              <PencilRuler size={16} />
-                              <Sparkle size={10} className="self-end" />
-                            </div>{" "}
-                            Summerize Content
-                          </Button>
-                        </div>
-                      </p>
-                    </AlertDescription>
-                  </Alert>
-                ))}
+                  null
+                ))} */}
 
               {contentSummarize && (
                 <div className="summary-content">
@@ -152,7 +129,7 @@ const SummarizerDrawer = ({
                         onClick={() => toggleDrawer(false)}
                         className="p-2 text-white bg-black rounded flex gap-2 items-center"
                       >
-                        <PanelRightOpen />
+                        <PanelLeftOpen />
                         Toggle Drawer
                       </Button>
                     </span>{" "}

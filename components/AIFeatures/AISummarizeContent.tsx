@@ -48,7 +48,7 @@ const AISummarizeContent = ({ editor }: any) => {
     try {
       setIsLoading(true);
       setIsDrawerOpen(true);
-      const response = await fetch("http://localhost:8080/summarizewithai", {
+      const response = await fetch("http://localhost:8080/v1/summarizewithai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

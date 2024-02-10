@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AIResponseProvider } from "@/context/AIResponseContext";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <AIResponseProvider>
+        <body className={inter.className}>
+          <Toaster position="top-center" />
+          {children}
+        </body>
+      </AIResponseProvider>
     </html>
   );
 }

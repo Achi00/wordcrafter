@@ -15,11 +15,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import AIPromptDialog from "../AIFeatures/AIPromptDialog";
 import { Type } from "lucide-react";
 import Menu from "./Menu";
 import AIExpandContent from "../AIFeatures/AIExpandContent";
 import AISummarizeContent from "../AIFeatures/AISummarizeContent";
+import AIIdeaGenerator from "../AIFeatures/AIIdeaGenerator";
+import AIStartWith from "../AIFeatures/AIStartWith";
 
 interface MyCustomToolbarProps {
   editor: any;
@@ -61,7 +62,7 @@ const CustomToolbar = ({ editor }: MyCustomToolbarProps) => {
 
   return (
     <Toolbar>
-      <div className="w-full flex justify-between items-center gap-5 flex-wrap">
+      <div className="w-full flex justify-between items-center gap-5 px-2 flex-wrap">
         <div className="flex flex-wrap gap-2 justify-center p-5">
           <Menu />
           <div className="flex flex-wrap gap-2 justify-center">
@@ -101,7 +102,9 @@ const CustomToolbar = ({ editor }: MyCustomToolbarProps) => {
           </div>
         </div>
         <div className="flex relative z-50 gap-2 justify-center items-center flex-wrap p-5">
-          <AIPromptDialog />
+          <AIStartWith />
+          <div className="w-[1px] h-7 bg-gray-500"></div>
+          <AIIdeaGenerator />
           <div className="w-[1px] h-7 bg-gray-500"></div>
           <AIExpandContent editor={editor} />
           <div className="w-[1px] h-7 bg-gray-500"></div>

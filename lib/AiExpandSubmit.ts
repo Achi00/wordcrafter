@@ -1,7 +1,7 @@
 export const handleSubmitToServer = async () => {
   const content = getContentFromEditor();
   try {
-    const response = await fetch("http://localhost:8080/expandwithai", {
+    const response = await fetch("http://localhost:8080/v1/expandwithai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

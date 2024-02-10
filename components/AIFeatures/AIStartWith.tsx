@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/hover-card";
 import { PopoverClose } from "@radix-ui/react-popover";
 
-const AIPromptDialog = () => {
+const AIStartWith = () => {
   const { setIntroResponse, setTopicsResponse } = useAIResponse();
 
   const [userInput, setUserInput] = useState("");
@@ -49,7 +49,7 @@ const AIPromptDialog = () => {
       setloading(true);
       setTopicsResponse("");
       setIntroResponse("");
-      const response = await fetch("http://localhost:8080/startwithai", {
+      const response = await fetch("http://localhost:8080/v1/startwithai", {
         method: "post",
         headers: {
           Accept: "application/json, text/plain, */*",
@@ -226,7 +226,10 @@ const AIPromptDialog = () => {
                   autoFocus
                 />
                 <PopoverClose asChild>
-                  <Button onClick={handleSubmit} disabled={loading}>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={loading || userInput === ""}
+                  >
                     {loading ? (
                       <div className="flex items-center justify-center">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -252,4 +255,4 @@ const AIPromptDialog = () => {
   );
 };
 
-export default AIPromptDialog;
+export default AIStartWith;
