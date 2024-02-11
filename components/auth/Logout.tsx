@@ -9,7 +9,11 @@ const Logout = () => {
     await logout();
     toast.info("You have been logged out");
   };
-  return <Button onClick={handleLogout}>Logout</Button>;
+  return (
+    <Button variant="link" onClick={handleLogout}>
+      Logout
+    </Button>
+  );
 };
 
 export default Logout;
