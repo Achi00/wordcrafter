@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AIResponseProvider } from "@/context/AIResponseContext";
+import { AuthProvider } from "../context/AuthContext";
 import { Toaster } from "sonner";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +20,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <AIResponseProvider>
-        <body className={inter.className}>
-          <Toaster position="top-center" />
-          {children}
-        </body>
-      </AIResponseProvider>
+      <AuthProvider>
+        <AIResponseProvider>
+          <body className={inter.className}>
+            <Toaster position="top-center" />
+            <Navbar />
+            {children}
+          </body>
+        </AIResponseProvider>
+      </AuthProvider>
     </html>
   );
 }
