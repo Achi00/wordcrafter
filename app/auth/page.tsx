@@ -13,10 +13,12 @@ import {
   Link,
   Router,
 } from "lucide-react";
+import Notification from "@/components/auth/Notifitacion";
 
 const page = () => {
   return (
     <div className="w-full h-screen bg-[#18181B] flex">
+      <Notification />
       <div className="absolute top-0 left-0 p-6 xl:p-5 lg:p-6 md:p-8 sm:p-5 text-white bg-[#18181B] w-full xl:w-1/2 lg:w-1/2 md:w-1/2">
         <Image src={Logo} alt="wordcrafter" width={250} height={150} />
       </div>

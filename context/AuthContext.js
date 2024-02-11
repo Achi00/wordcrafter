@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 const AuthContext = createContext();
 
@@ -36,7 +35,6 @@ export const AuthProvider = ({ children }) => {
   // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !isLoggedIn) {
-      toast.info("Please authenticate to access this page.");
       router.push("/auth");
     }
   }, [isLoggedIn, loading, router]);
