@@ -32,7 +32,7 @@ const page = () => {
                   <FileCode />
                   Dynamic Code Execution:
                 </strong>{" "}
-                <div className="pl-9">
+                <div className="pl-9 leading-7">
                   <span>
                     Run JavaScript code snippets with support for all npm
                     packages.
@@ -44,7 +44,7 @@ const page = () => {
                   <BrainCircuit />
                   AI-Assisted Coding:
                 </strong>{" "}
-                <div className="pl-9">
+                <div className="pl-9 leading-7">
                   <span>
                     AI powered real-time coding assistance, including syntax
                     correction, code suggestions, and optimization tips.
@@ -56,7 +56,7 @@ const page = () => {
                   <Github />
                   Connect With Github:
                 </strong>{" "}
-                <div className="pl-9">
+                <div className="pl-9 leading-7">
                   <span>
                     Create and manage GitHub repositories directly from the
                     application.
@@ -76,7 +76,7 @@ const page = () => {
                   <Router />
                   Web Search and Analysis:
                 </strong>{" "}
-                <div className="pl-9">
+                <div className="pl-9 leading-7">
                   <span>
                     Enter a URL and receive an AI-generated summary, key
                     insights, and resources.
@@ -88,7 +88,7 @@ const page = () => {
                   <FileStack />
                   Content Insight and Resource Compilation:
                 </strong>{" "}
-                <div className="pl-9">
+                <div className="pl-9 leading-7">
                   <span>
                     AI powered real-time coding assistance, including syntax
                     correction, code suggestions, and optimization tips.
@@ -100,7 +100,7 @@ const page = () => {
                   <Link />
                   Strategic Resource Aggregation:
                 </strong>{" "}
-                <div className="pl-9">
+                <div className="pl-9 leading-7">
                   <span>
                     Dive deeper into your research with {"AI's"} ability to
                     extract, organize, and present a curated list of external

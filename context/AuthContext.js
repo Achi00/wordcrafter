@@ -1,11 +1,13 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -16,8 +18,11 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/auth/status");
+      const response = await fetch("http://localhost:8080/auth/status", {
+        credentials: "include", // Include this line
+      });
       const data = await response.json();
+      console.log(data);
       setIsLoggedIn(data.isLoggedIn);
     } catch (error) {
       console.error("Failed to check authentication status", error);
@@ -29,11 +34,18 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:8080/auth/logout", {
+      const response = await fetch("http://localhost:8080/auth/logout", {
         method: "GET",
-        credentials: "include",
+        credentials: "include", // Ensure credentials are included for session-based auth
       });
-      setIsLoggedIn(false);
+      if (response.ok) {
+        // Only update state and redirect if the logout was successful
+        setIsLoggedIn(false);
+        router.push("/"); // Redirect to the home page or login page
+      } else {
+        // Handle failure or add error handling as needed
+        throw new Error("Logout failed");
+      }
     } catch (error) {
       console.error("Logout failed", error);
     }
