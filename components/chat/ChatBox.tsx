@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { sendMessage } from "../../lib/AiChat";
 import { Button } from "../ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,9 +9,19 @@ interface MessageProps {
   content: string;
 }
 
-const ChatBox = ({ chatId }: { chatId: string }) => {
+interface ChatBoxProps {
+  chatId: string;
+  initialMessages: MessageProps[];
+}
+
+const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
   const [userInput, setUserInput] = useState<string>("");
   const [messages, setMessages] = useState<MessageProps[]>([]);
+
+  // Initialize messages state with initialMessages when the component mounts or chatId changes
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages, chatId]);
 
   const handleSendMessage = async () => {
     setUserInput("");
@@ -34,11 +44,6 @@ const ChatBox = ({ chatId }: { chatId: string }) => {
           </p>
         ))}
       </div>
-      {/* <input
-        type="text"
-        value={userInput}
-        onChange={(e) => setUserInput(e.target.value)}
-      /> */}
       <div className="flex w-full">
         <Textarea
           placeholder="Type your message here."

@@ -4,8 +4,10 @@ import ChatBox from "../../../../components/chat/ChatBox";
 import { startChat } from "@/lib/AiChat";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { MessageSquarePlus } from "lucide-react";
+import router from "next/router";
+import Sidebar from "@/components/Sidebar";
 
 interface UserProps {
   _id: string;
@@ -17,12 +19,12 @@ interface UserProps {
 
 const Page = () => {
   const { isLoggedIn, loading } = useAuth();
-  const [chatId, setChatId] = useState<string>("");
+  // const [chatId, setChatId] = useState<string>("");
   const [userData, setUserData] = useState<UserProps | null>(null);
+  const [messages, setMessages] = useState([]);
 
-  const params = useParams<{ tag: string; item: string }>();
-
-  console.log(params);
+  const params = useParams<{ chatid: string }>();
+  const chatId = params.chatid;
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -46,11 +48,33 @@ const Page = () => {
     fetchUserInfo();
   }, [isLoggedIn, loading]); // Re-fetch when isLoggedIn or loading changes
 
-  const handleStartChat = async () => {
+  useEffect(() => {
+    const fetchChatMessages = async () => {
+      if (chatId) {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/v1/getcodemessages/${chatId}`
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch chat messages");
+          }
+          const data = await response.json();
+          setMessages(data.messages); // Update your state with the fetched messages
+        } catch (error) {
+          console.error("Error fetching chat messages:", error);
+        }
+      }
+    };
+
+    fetchChatMessages();
+  }, [chatId]);
+
+  const handleNewChat = async () => {
     if (userData && userData._id) {
       try {
         const chatData = await startChat(userData._id);
-        setChatId(chatData._id);
+        // setChatId(chatData._id);
+        router.push(`/chat/code/${chatData._id}`);
       } catch (error) {
         console.error("Failed to start chat:", error);
       }
@@ -60,24 +84,28 @@ const Page = () => {
   };
 
   return (
-    <div className="w-full flex items-center justify-center h-screen">
-      <div className="flex flex-col p-5 justify-start">
-        <Button
-          variant="outline"
-          onClick={handleStartChat}
-          disabled={!userData}
-        >
-          {!userData ? (
-            <p>Please wait...</p>
-          ) : (
-            <p className="flex items-center gap-2">
-              <MessageSquarePlus /> New Chat
-            </p>
-          )}
-        </Button>
+    <>
+      <Sidebar />
+
+      <div className="w-full flex items-center justify-center h-screen">
+        <div className="flex flex-col p-5 justify-start">
+          <Button
+            variant="outline"
+            onClick={handleNewChat}
+            disabled={!userData}
+          >
+            {!userData ? (
+              <p>Please wait...</p>
+            ) : (
+              <p className="flex items-center gap-2">
+                <MessageSquarePlus /> New Chat
+              </p>
+            )}
+          </Button>
+        </div>
+        {chatId && <ChatBox chatId={chatId} initialMessages={messages} />}
       </div>
-      {chatId && <ChatBox chatId={chatId} />}
-    </div>
+    </>
   );
 };
 

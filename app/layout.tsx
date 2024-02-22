@@ -26,7 +26,6 @@ export default function RootLayout({
           <body className={inter.className}>
             <Toaster position="top-center" />
             <Navbar />
-            <Sidebar />
             {children}
           </body>
         </AIResponseProvider>

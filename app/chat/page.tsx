@@ -6,6 +6,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import ChatList from "@/components/chat/ChatList";
 import { MessageSquarePlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Sidebar from "@/components/Sidebar";
 
 interface UserProps {
   _id: string;
@@ -19,6 +21,8 @@ const Page = () => {
   const { isLoggedIn, loading } = useAuth();
   const [chatId, setChatId] = useState<string>("");
   const [userData, setUserData] = useState<UserProps | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -42,11 +46,13 @@ const Page = () => {
     fetchUserInfo();
   }, [isLoggedIn, loading]); // Re-fetch when isLoggedIn or loading changes
 
-  const handleStartChat = async () => {
+  const handleNewChat = async () => {
     if (userData && userData._id) {
       try {
         const chatData = await startChat(userData._id);
         setChatId(chatData._id);
+        // Navigate to the new chat route using the chat ID
+        router.push(`/chat/code/${chatData._id}`);
       } catch (error) {
         console.error("Failed to start chat:", error);
       }
@@ -56,24 +62,26 @@ const Page = () => {
   };
 
   return (
-    <div className="w-full flex items-center justify-center h-screen">
-      <div className="flex flex-col p-5 justify-start">
-        <Button
-          variant="outline"
-          onClick={handleStartChat}
-          disabled={!userData}
-        >
-          {!userData ? (
-            <p>Please wait...</p>
-          ) : (
-            <p className="flex items-center gap-2">
-              <MessageSquarePlus /> New Chat
-            </p>
-          )}
-        </Button>
+    <>
+      <Sidebar />
+      <div className="w-full flex items-center justify-center h-screen">
+        <div className="flex flex-col p-5 justify-start">
+          <Button
+            variant="outline"
+            onClick={handleNewChat}
+            disabled={!userData}
+          >
+            {!userData ? (
+              <p>Please wait...</p>
+            ) : (
+              <p className="flex items-center gap-2">
+                <MessageSquarePlus /> New Chat
+              </p>
+            )}
+          </Button>
+        </div>
       </div>
-      {chatId && <ChatBox chatId={chatId} />}
-    </div>
+    </>
   );
 };
 
