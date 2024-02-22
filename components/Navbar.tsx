@@ -45,7 +45,6 @@ const Navbar = () => {
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
-          console.log(data);
         } else {
           throw new Error("Failed to fetch user info");
         }

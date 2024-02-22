@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     checkAuthStatus();
@@ -22,11 +23,12 @@ export const AuthProvider = ({ children }) => {
         credentials: "include", // Include this line
       });
       const data = await response.json();
-      console.log(data);
       setIsLoggedIn(data.isLoggedIn);
+      setUser(data);
     } catch (error) {
       console.error("Failed to check authentication status", error);
       setIsLoggedIn(false);
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -59,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, loading, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, loading, logout, user }}>
       {children}
     </AuthContext.Provider>
   );

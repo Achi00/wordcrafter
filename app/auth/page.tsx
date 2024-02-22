@@ -5,7 +5,6 @@ import Image from "next/image";
 import {
   BrainCircuit,
   CloudCog,
-  Code2,
   FileCode,
   FileStack,
   GanttChart,

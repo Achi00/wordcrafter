@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import ChatBox from "../../components/chat/ChatBox";
+import ChatBox from "../../../../components/chat/ChatBox";
 import { startChat } from "@/lib/AiChat";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import ChatList from "@/components/chat/ChatList";
+import { useParams } from "next/navigation";
 import { MessageSquarePlus } from "lucide-react";
 
 interface UserProps {
@@ -19,6 +19,10 @@ const Page = () => {
   const { isLoggedIn, loading } = useAuth();
   const [chatId, setChatId] = useState<string>("");
   const [userData, setUserData] = useState<UserProps | null>(null);
+
+  const params = useParams<{ tag: string; item: string }>();
+
+  console.log(params);
 
   useEffect(() => {
     const fetchUserInfo = async () => {

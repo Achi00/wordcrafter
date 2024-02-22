@@ -5,6 +5,7 @@ import { AIResponseProvider } from "@/context/AIResponseContext";
 import { AuthProvider } from "../context/AuthContext";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <body className={inter.className}>
             <Toaster position="top-center" />
             <Navbar />
+            <Sidebar />
             {children}
           </body>
         </AIResponseProvider>
