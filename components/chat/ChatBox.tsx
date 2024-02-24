@@ -20,6 +20,7 @@ const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
   const [userInput, setUserInput] = useState<string>("");
   const [messages, setMessages] = useState<MessageProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [ongoingAIResponse, setOngoingAIResponse] = useState("");
 
   // Initialize messages state with initialMessages when the component mounts or chatId changes
   useEffect(() => {
@@ -27,17 +28,18 @@ const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
   }, [initialMessages, chatId]);
 
   const handleSendMessage = async () => {
-    if (!userInput.trim()) return;
+    if (!userInput.trim()) return; // Prevent sending empty messages
 
     setMessages((prev) => [...prev, { sender: "user", content: userInput }]);
     setUserInput("");
 
     try {
       const streamResponse = await sendMessage(chatId, "user", userInput);
+
       if (streamResponse.body) {
         const reader = streamResponse.body.getReader();
         const decoder = new TextDecoder();
-        let buffer = "";
+        let fullAIResponse = "";
 
         while (true) {
           const { value, done } = await reader.read();
@@ -45,34 +47,45 @@ const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
             break; // Stream completed
           }
 
-          buffer += decoder.decode(value, { stream: true });
-          const chunks = buffer.split("\n");
+          const chunk = decoder.decode(value, { stream: true });
+          // console.log("Received chunk:", chunk);
 
-          // Process all chunks except the last, which might be incomplete
-          for (let i = 0; i < chunks.length - 1; i++) {
-            try {
-              const parsedChunk = JSON.parse(chunks[i]);
-              console.log(parsedChunk);
-              // Assuming parsedChunk.type could be "aiResponse" for simplicity
-              if (parsedChunk.type === "aiResponse" && parsedChunk.content) {
-                setMessages((prevMessages) => [
-                  ...prevMessages,
-                  { sender: "assistant", content: parsedChunk.content },
-                ]);
+          const lines = chunk.split("\n");
+          lines.forEach((line) => {
+            if (line) {
+              try {
+                const parsedChunk = JSON.parse(line);
+
+                if (
+                  parsedChunk.type === "aiResponse" &&
+                  parsedChunk.content.trim()
+                ) {
+                  fullAIResponse += parsedChunk.content.trim() + " "; // Combine chunks
+                  console.log("fullAIResponse:" + fullAIResponse);
+                  setOngoingAIResponse(fullAIResponse);
+                }
+              } catch (e) {
+                console.error("Error parsing chunk: ", e);
               }
-            } catch (e) {
-              console.error("Error parsing chunk: ", e);
             }
-          }
+          });
 
-          // Keep the last chunk in the buffer in case it's incomplete
-          buffer = chunks[chunks.length - 1];
+          if (done) {
+            // Only update messages when the full AI response is received
+            if (fullAIResponse) {
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "assistant", content: fullAIResponse },
+              ]);
+            }
+            break;
+          }
         }
       }
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
-      setIsLoading(false); // Ensure loading state is reset after operation
+      setIsLoading(false); // Ensure loading state resets
     }
   };
 
@@ -84,7 +97,20 @@ const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
             <strong>{msg.sender}:</strong> {msg.content}
           </p>
         ))}
+        {/* Display ongoing AI response here */}
+        {ongoingAIResponse && (
+          <p>
+            <strong>Assistamt:</strong> {ongoingAIResponse}
+          </p>
+        )}
       </ScrollArea>
+      {/* <ScrollArea className="h-[80vh] w-full p-4">
+        {messages.map((msg: MessageProps, index: number) => (
+          <p key={index}>
+            <strong>{msg.sender}:</strong> {msg.content}
+          </p>
+        ))}
+      </ScrollArea> */}
       <div className="flex w-full items-center gap-2">
         <Input
           placeholder="Type your message here."
