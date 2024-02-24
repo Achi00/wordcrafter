@@ -1,10 +1,17 @@
+"use client";
 import { useEffect, useState } from "react";
 import { sendMessage } from "../../lib/AiChat";
 import { Button } from "../ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, SendHorizontal } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { ArrowUp, BrainCircuit } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "../ui/input";
+import { useAuth } from "@/context/AuthContext";
+import { fetchUserInfo } from "@/lib/User";
+import { UserProps } from "@/types/UserProps";
+import Image from "next/image";
+import gptIcon from "@/assets/gpt_icon.jpg";
 
 interface MessageProps {
   sender: string;
@@ -21,6 +28,39 @@ const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
   const [messages, setMessages] = useState<MessageProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [ongoingAIResponse, setOngoingAIResponse] = useState("");
+  const [userData, setUserData] = useState<UserProps>();
+  const { isLoggedIn, loading } = useAuth();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if (isLoggedIn && !loading) {
+        try {
+          const response = await fetch("http://localhost:8080/v1/users", {
+            method: "GET",
+            credentials: "include", // Important for sessions
+          });
+          if (response.ok) {
+            const data: UserProps = await response.json();
+            setUserData(data);
+          } else {
+            throw new Error("Failed to fetch user info");
+          }
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      }
+    };
+    fetchUserInfo();
+  }, [isLoggedIn, loading]);
+
+  console.log(userData?.picture);
+
+  // const getUserData = async () => {
+  //   const userData = await fetchUserInfo();
+  //   return userData;
+  // };
+
+  // console.log("user:" + getUserData);
 
   // Initialize messages state with initialMessages when the component mounts or chatId changes
   useEffect(() => {
@@ -94,14 +134,37 @@ const ChatBox = ({ chatId, initialMessages }: ChatBoxProps) => {
       <ScrollArea className="h-[80vh] w-full p-4">
         {messages.map((msg: MessageProps, index: number) => (
           <p key={index}>
-            <strong>{msg.sender}:</strong> {msg.content}
+            <strong className="flex items-center gap-1">
+              {userData && (
+                <Image
+                  className="rounded-lg"
+                  src={`${userData?.picture}`}
+                  alt="wordcrafter"
+                  width="30"
+                  height="30"
+                />
+              )}
+              {msg.sender}:
+            </strong>{" "}
+            {msg.content}
+            <Separator className="my-4" />
           </p>
         ))}
         {/* Display ongoing AI response here */}
         {ongoingAIResponse && (
-          <p>
-            <strong>Assistamt:</strong> {ongoingAIResponse}
-          </p>
+          <div>
+            <div className="flex items-center gap-2">
+              <Image
+                src={gptIcon}
+                width={30}
+                height={30}
+                alt="wordcrafter"
+                className="rounded-lg"
+              />
+              <strong>AI:</strong>
+            </div>
+            <p className="flex items-center gap-1">{ongoingAIResponse}</p>
+          </div>
         )}
       </ScrollArea>
       {/* <ScrollArea className="h-[80vh] w-full p-4">

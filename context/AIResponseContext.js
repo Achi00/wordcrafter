@@ -30,29 +30,6 @@ export const AIResponseProvider = ({ children }) => {
   // for content checking in editor
   const [isContentAvailable, setIsContentAvailable] = useState(false);
 
-  // code chat
-  // New state for chat functionality
-  const [chatMessages, setChatMessages] = useState([]);
-
-  // Function to append new chat messages
-  const appendChatMessage = (message) => {
-    setChatMessages((prevMessages) => [...prevMessages, message]);
-  };
-
-  // append content to the last AI response (if it's part of an ongoing stream)
-  const appendToLastAIResponse = (additionalContent) => {
-    setChatMessages((prevMessages) => {
-      const lastMessage = prevMessages[prevMessages.length - 1];
-      if (lastMessage && lastMessage.sender === "assistant") {
-        return [
-          ...prevMessages.slice(0, -1),
-          { ...lastMessage, content: lastMessage.content + additionalContent },
-        ];
-      }
-      return prevMessages;
-    });
-  };
-
   const value = {
     introResponse,
     setIntroResponse,
@@ -70,10 +47,6 @@ export const AIResponseProvider = ({ children }) => {
     contentSummarizeList,
     setContentSummarizeList,
     setSummarizedContentList,
-    // New values for chat functionality
-    chatMessages,
-    appendChatMessage,
-    appendToLastAIResponse,
   };
 
   return (
