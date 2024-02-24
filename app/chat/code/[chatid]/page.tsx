@@ -87,8 +87,8 @@ const Page = () => {
     <>
       <Sidebar />
 
-      <div className="w-full flex items-center justify-center h-screen">
-        <div className="flex flex-col p-5 justify-start">
+      <div className="w-full flex items-center justify-center h-[90vh]">
+        {/* <div className="flex flex-col p-5 justify-start">
           <Button
             variant="outline"
             onClick={handleNewChat}
@@ -102,7 +102,7 @@ const Page = () => {
               </p>
             )}
           </Button>
-        </div>
+        </div> */}
         {chatId && <ChatBox chatId={chatId} initialMessages={messages} />}
       </div>
     </>

@@ -63,7 +63,7 @@ const Page = () => {
 
   return (
     <>
-      <Sidebar />
+      <Sidebar handleNewChat={handleNewChat} userData={userData} />
       <div className="w-full flex items-center justify-center h-screen">
         <div className="flex flex-col p-5 justify-start">
           <Button
