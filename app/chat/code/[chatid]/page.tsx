@@ -6,7 +6,6 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import { MessageSquarePlus } from "lucide-react";
-import router from "next/router";
 import Sidebar from "@/components/Sidebar";
 
 interface UserProps {
@@ -25,6 +24,8 @@ const Page = () => {
 
   const params = useParams<{ chatid: string }>();
   const chatId = params.chatid;
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -88,7 +89,7 @@ const Page = () => {
       <Sidebar />
 
       <div className="w-full flex items-center justify-center h-[90vh]">
-        {/* <div className="flex flex-col p-5 justify-start">
+        <div className="flex flex-col p-5 justify-start">
           <Button
             variant="outline"
             onClick={handleNewChat}
@@ -102,7 +103,7 @@ const Page = () => {
               </p>
             )}
           </Button>
-        </div> */}
+        </div>
         {chatId && <ChatBox chatId={chatId} initialMessages={messages} />}
       </div>
     </>

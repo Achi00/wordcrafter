@@ -154,3 +154,40 @@
     transform: translate(24px, 0);
   }
 }
+
+.scrollable-div {
+  overflow-y: auto; /* Enable vertical scrolling */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+/* For Chrome, Safari, and newer versions of Edge */
+.scrollable-div::-webkit-scrollbar {
+  display: none;
+}
+
+/* styles.css */
+code {
+  background-color: #191c1f;
+  border-radius: 5px;
+  padding: 2px 4px;
+}
+
+pre {
+  background-color: #191c1f;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Add this to your CSS file */
+.inline-code {
+  background-color: #d9d9d9; /* Light gray background */
+  color: #1e1e1e; /* Dark text for readability */
+  padding: 2px;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.hover:hover {
+  background-color: #3e4449;
+}
